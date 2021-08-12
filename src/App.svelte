@@ -1,24 +1,69 @@
 <script>
-  import logo from './assets/svelte.png'
-  import Counter from './lib/Counter.svelte'
+	let input = ''
+	let choice = ''
+	let result = ''
+	
+	let questions = [
+				{
+					question:'Does current split or stay constant through a series circuit?',
+					option1:'Same',
+					option2:'Splits',
+					answer:'Same',
+					result:'',
+					choice:''
+				},
+				{
+					question:'Does voltage stay constant or split in a series circuit?',
+					option1:'Same',
+					option2:'Splits',
+					answer:'Splits',
+					result:'',
+					choice:''
+				}
+	]
+	let i = 1
+	let question = questions.at[i]
+	
+	function check (response) {
+		if (response == questions[i].answer) {
+			result = 'correct'
+		} else {
+			result = 'wrong'
+		}
+		console.log('function is done. result is ' + result)
+		result += ' the correct answer was ' + questions[i].answer
+		return result
+	}
+	
 </script>
 
-<main>
-  <img src={logo} alt="Svelte Logo" />
-  <h1>Hello world!</h1>
+<h1>Electricty! </h1>
 
-  <Counter />
+<p>
+	hello there. Please bare with the code is not done yet.
+</p>
 
-  <p>
-    Visit <a href="https://svelte.dev">svelte.dev</a> to learn how to build Svelte
-    apps.
-  </p>
+<!-- {#if (i < questions.length)} -->
+  {questions[i].question}
+      <label>
+        <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
+        {questions[i].option1}
+      </label>
+      <br>
+      <label>
+        <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
+        {questions[i].option2}
+      </label>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme">SvelteKit</a> for
-    the officially supported framework, also powered by Vite!
-  </p>
-</main>
+<label>
+<button on:click={check(questions[i].choice)}>
+	Check answer
+	</button>
+</label>
+
+<p>
+	{result}
+</p>
 
 <style>
   :root {
