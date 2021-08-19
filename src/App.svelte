@@ -2,6 +2,7 @@
 	let input = ''
 	let choice = ''
 	let result = ''
+  let points = 0
 	
 	let questions = [
 				{
@@ -41,13 +42,14 @@
 	function check (response) {
 		if (response == questions[i].answer) {
 			result = 'correct'
+      points += 1
 		} else {
 			result = 'wrong'
       result += ' the correct answer was ' + questions[i].answer
 		}
     answering = false
 		console.log('function is done. result is ' + result + 'answering is ' + answering)
-		return result, answering
+		return result, answering, points
 	}
 	
 	function next () {
@@ -105,7 +107,7 @@
   <p> You are done :) </p>
 {/if}
 <p>
-	{result}
+	{result}! You have {points} points.
 </p>
 
 
