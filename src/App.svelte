@@ -31,6 +31,24 @@
 					result:'',
 					graphic:'../src/assets/circuit1.png',
 					choice:''
+				},
+        {
+					question:'Does voltage stay constant or split in a parallel circuit?',
+					option1:'same',
+					option2:'splits',
+					answer:'same',
+					result:'',
+					graphic:'',
+					choice:''
+				},
+        {
+					question:'Does current stay constant or split in a parallel circuit?',
+					option1:'same',
+					option2:'splits',
+					answer:'splits',
+					result:'',
+					graphic:'',
+					choice:''
 				}
 			
 	]
