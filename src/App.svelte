@@ -3,10 +3,13 @@
 	let choice = ''
 	let result = ''
   let points = 0
+  let name = ''
+  let formRoom = ''
 	
 	let questions = [
 				{
 					question:'Does current split or stay constant through a series 			circuit?',
+          type: 'multi',
 					option1:'same',
 					option2:'splits',
 					answer:'same',
@@ -16,6 +19,7 @@
 				},
 				{
 					question:'Does voltage stay constant or split in a series circuit?',
+          type: 'multi',
 					option1:'same',
 					option2:'splits',
 					answer:'splits',
@@ -25,15 +29,15 @@
 				},
         {
 					question:'What is the voltage across the lightbulb in this circuit?',
-					option1:'4V',
-					option2:'6V',
-					answer:'4V',
+          type: 'number',
+					answer:'4',
 					result:'',
 					graphic:'../src/assets/circuit1.png',
 					choice:''
 				},
         {
 					question:'Does voltage stay constant or split in a parallel circuit?',
+          type: 'multi',
 					option1:'same',
 					option2:'splits',
 					answer:'same',
@@ -43,6 +47,7 @@
 				},
         {
 					question:'Does current stay constant or split in a parallel circuit?',
+          type: 'multi',
 					option1:'same',
 					option2:'splits',
 					answer:'splits',
@@ -59,11 +64,11 @@
 	
 	function check (response) {
 		if (response == questions[i].answer) {
-			result = 'correct'
+			result = 'Correct!'
       points += 1
 		} else {
-			result = 'wrong'
-      result += ' the correct answer was ' + questions[i].answer
+			result = 'Wrong.'
+      result += ' The correct answer was ' + questions[i].answer
 		}
     answering = false
 		console.log('function is done. result is ' + result + 'answering is ' + answering)
@@ -93,13 +98,24 @@
 
 <h1>Electricty! </h1>
 
+<input bind:value={name} placeholder="enter your name">
+
+<input bind:value={formRoom} placeholder="enter your form class">
+
+{#if name != '' && formRoom != ''}
+  <p> Hello {name} from room {formRoom}</p>
+{/if}
+<br><br>
 {#if (i < questions.length)}
     {questions[i].question}
 
   {#if (questions[i].graphic != '')}
     <img src={questions[i].graphic} alt='not working'>
   {/if}
-        <br>
+
+<br>
+
+  {#if (questions[i].type == 'multi')}
         <label>
           <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
           {questions[i].option1}
@@ -111,6 +127,9 @@
         </label>
         <br>
         <br>
+    {:else if (questions[i].type == 'number')}
+        <input type='number' bind:value={questions[i].choice}>
+    {/if}
 
     {#if answering}
     <button id='btnCheck' on:click={state(questions[i].choice)}>
@@ -124,9 +143,11 @@
 {:else}
   <p> You are done :) </p>
 {/if}
-<p>
-	{result}! You have {points} points.
-</p>
+
+{#if (result != '')}
+	<p> {result} </p>
+{/if}
+<p>You have {points} points.</p>
 
 
 <style>
