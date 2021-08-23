@@ -31,6 +31,7 @@
 					question:'What is the voltage across the lightbulb in this circuit?',
           type: 'number',
 					answer:'4',
+          unit: 'Volts',
 					result:'',
 					graphic:'../src/assets/circuit1.png',
 					choice:''
@@ -51,6 +52,26 @@
 					option1:'same',
 					option2:'splits',
 					answer:'splits',
+					result:'',
+					graphic:'',
+					choice:''
+				},
+        {
+					question:'An electric field is set up between parallel plates. A proton is placed between the plates, will it travel with or against the field lines?',
+          type: 'multi',
+					option1:'with',
+					option2:'against',
+					answer:'with',
+					result:'',
+					graphic:'',
+					choice:''
+				},
+        {
+					question:'An electric field is set up between parallel plates. An electron is placed between the plates, will it travel with or against the field lines?',
+          type: 'multi',
+					option1:'with',
+					option2:'against',
+					answer:'against',
 					result:'',
 					graphic:'',
 					choice:''
@@ -129,6 +150,7 @@
         <br>
     {:else if (questions[i].type == 'number')}
         <input type='number' bind:value={questions[i].choice}>
+        {questions[i].unit}
     {/if}
 
     {#if answering}
@@ -142,12 +164,13 @@
     {/if}
 {:else}
   <p> You are done :) </p>
+  
 {/if}
 
 {#if (result != '')}
 	<p> {result} </p>
 {/if}
-<p>You have {points} points.</p>
+<p>Points: {points}/{questions.length} </p>
 
 
 <style>
@@ -186,4 +209,9 @@
       max-width: none;
     }
   }
+
+  input[type=number] {
+    width: 40px;
+  }
+
 </style>
