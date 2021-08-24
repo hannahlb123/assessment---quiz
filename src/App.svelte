@@ -82,6 +82,7 @@
 	let i = 0
 	let question = questions.at[i]
   let answering = true
+  let complete = false
 	
 	function check (response) {
 		if (response == questions[i].answer) {
@@ -105,15 +106,26 @@
     return result, answering
 	}
 
+  function reset () {
+    answering = true
+    i = 0
+    points = 0
+    name = ''
+    formRoom = ''
+    input = ''
+    choice = ''
+    result = ''
+		console.log(answering + i + points)
+  }
+
 	function state(choice) {
-		console.log('function state running. answering = ' + answering)
+		console.log('function state running. answering = ' + answering + 'complete is ' + complete)
 		if (answering === false) {
-				next ()
-			} else if (answering === true) {
+        next()
+        } else if (answering === true) {
 				check(choice)
 			}
 	}
-	
 	
 </script>
 
@@ -164,6 +176,7 @@
     {/if}
 {:else}
   <p> You are done :) </p>
+    <button id='btnCheck' on:click={reset}>Reset</button>
   
 {/if}
 
