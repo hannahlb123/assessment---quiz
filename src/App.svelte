@@ -1,12 +1,13 @@
 <script>
-	let input = ''
 	let choice = ''
 	let result = ''
   let points = 0
   let name = ''
   let formRoom = ''
+  let started = false
+  let gameLength = 2
 	
-	let questions = [
+	let library = [
 				{
 					question:'Does current split or stay constant through a series 			circuit?',
           type: 'multi',
@@ -75,10 +76,28 @@
 					result:'',
 					graphic:'',
 					choice:''
-				}
+				},
+        {
+					question:'The voltmeter reads 4.0V. What is the current around the circuit?',
+          type: 'number',
+					answer:'0.8',
+          unit: 'Amps',
+					result:'',
+					graphic:'../src/assets/circuit2.png',
+					choice:''
+				},
 			
 	]
+
+  let questions = []
 	
+  function start() {
+    started = true
+    questions = library.sort(function(a,b){return 0.5 - Math.random()});
+    questions.splice(gameLength, questions.length)
+    questions[i].choice = ''
+  }
+
 	let i = 0
 	let question = questions.at[i]
   let answering = true
@@ -103,19 +122,19 @@
     answering = true
 		console.log('i = ' + i)
     result = ''
+    questions[i].choice = ''
     return result, answering
 	}
 
   function reset () {
+    started = false
     answering = true
     i = 0
     points = 0
     name = ''
     formRoom = ''
-    input = ''
-    choice = ''
     result = ''
-		console.log(answering + i + points)
+    return i, points, name, formRoom, result
   }
 
 	function state(choice) {
@@ -135,56 +154,60 @@
 
 <input bind:value={formRoom} placeholder="enter your form class">
 
-{#if name != '' && formRoom != ''}
-  <p> Hello {name} from room {formRoom}</p>
-{/if}
-<br><br>
-{#if (i < questions.length)}
-    {questions[i].question}
+{#if started === false}
+  {#if name != '' && formRoom != ''}
+    <p> Hello {name} from room {formRoom}</p>
+    <button id='btnStart' on:click={start}>Start Quiz</button>
+  {/if}
+  <br><br>
+{:else if started === true}
+<p>Name: {name}   Room: {formRoom}</p>
+  {#if (i < gameLength)}
+      {questions[i].question}
 
-  {#if (questions[i].graphic != '')}
-    <img src={questions[i].graphic} alt='not working'>
+    {#if (questions[i].graphic != '')}
+      <img src={questions[i].graphic} alt='not working'>
+    {/if}
+
+  <br>
+
+    {#if (questions[i].type == 'multi')}
+          <label>
+            <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
+            {questions[i].option1}
+          </label>
+          <br>
+          <label>
+            <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
+            {questions[i].option2}
+          </label>
+          <br>
+          <br>
+      {:else if (questions[i].type == 'number')}
+          <input type='number' bind:value={questions[i].choice}>
+          {questions[i].unit}
+      {/if}
+
+      {#if answering}
+      <button id='btnCheck' on:click={state(questions[i].choice)}>
+        Check
+      </button>
+      {:else}
+      <button id='btnNext' on:click={state}>
+        Next
+      </button>
+      {/if}
+  {:else}
+    <p> You are done :) </p>
+      <button id='btnCheck' on:click={reset}>Reset</button>
+    
   {/if}
 
-<br>
-
-  {#if (questions[i].type == 'multi')}
-        <label>
-          <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
-          {questions[i].option1}
-        </label>
-        <br>
-        <label>
-          <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
-          {questions[i].option2}
-        </label>
-        <br>
-        <br>
-    {:else if (questions[i].type == 'number')}
-        <input type='number' bind:value={questions[i].choice}>
-        {questions[i].unit}
-    {/if}
-
-    {#if answering}
-    <button id='btnCheck' on:click={state(questions[i].choice)}>
-      Check
-    </button>
-    {:else}
-    <button id='btnNext' on:click={state}>
-      Next
-    </button>
-    {/if}
-{:else}
-  <p> You are done :) </p>
-    <button id='btnCheck' on:click={reset}>Reset</button>
-  
+  {#if (result != '')}
+    <p> {result} </p>
+  {/if}
+  <p>Points: {points}/{gameLength} </p>
 {/if}
-
-{#if (result != '')}
-	<p> {result} </p>
-{/if}
-<p>Points: {points}/{questions.length} </p>
-
 
 <style>
   :root {
