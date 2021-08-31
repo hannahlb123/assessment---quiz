@@ -5,7 +5,7 @@
   let name = ''
   let formRoom = ''
   let started = false
-  let gameLength = 2
+  let gameLength = 3
 	
 	let library = [
 				{
@@ -13,6 +13,7 @@
           type: 'multi',
 					option1:'same',
 					option2:'splits',
+          option3: '',
 					answer:'same',
 					result:'',
 					graphic:'',
@@ -23,6 +24,7 @@
           type: 'multi',
 					option1:'same',
 					option2:'splits',
+          option3: '',
 					answer:'splits',
 					result:'',
 					graphic:'',
@@ -34,7 +36,7 @@
 					answer:'4',
           unit: 'Volts',
 					result:'',
-					graphic:'../src/assets/circuit1.png',
+					graphic:'../src/assets/images/circuit1.png',
 					choice:''
 				},
         {
@@ -42,6 +44,7 @@
           type: 'multi',
 					option1:'same',
 					option2:'splits',
+          option3: '',
 					answer:'same',
 					result:'',
 					graphic:'',
@@ -53,6 +56,7 @@
 					option1:'same',
 					option2:'splits',
 					answer:'splits',
+          option3: '',
 					result:'',
 					graphic:'',
 					choice:''
@@ -62,6 +66,7 @@
           type: 'multi',
 					option1:'with',
 					option2:'against',
+          option3: '',
 					answer:'with',
 					result:'',
 					graphic:'',
@@ -72,20 +77,54 @@
           type: 'multi',
 					option1:'with',
 					option2:'against',
+          option3: '',
 					answer:'against',
 					result:'',
 					graphic:'',
 					choice:''
 				},
         {
-					question:'The voltmeter reads 4.0V. What is the current around the circuit?',
+					question:'The voltmeter reads 4.0V. What is the current around the circuit? Hint: V = IR',
           type: 'number',
 					answer:'0.8',
           unit: 'Amps',
 					result:'',
-					graphic:'../src/assets/circuit2.png',
+					graphic:'../src/assets/images/circuit2.png',
 					choice:''
 				},
+        {
+					question:'What does this circuit symbol represent?',
+          type: 'multi',
+					option1:'switch',
+					option2:'lightbulb',
+          option3:'voltmeter',
+					answer:'against',
+					result:'',
+					graphic:'../src/assets/images/lightbulb.png',
+					choice:''
+				},
+        {
+					question:'What does this circuit symbol represent?',
+          type: 'multi',
+					option1:'open switch',
+					option2:'closed switch',
+          option3:'resistor',
+					answer:'open switch',
+					result:'',
+					graphic:'../src/assets/images/openSwitch.png',
+					choice:''
+				},
+        {
+					question:'What does this circuit symbol represent?',
+          type: 'multi',
+					option1:'open switch',
+					option2:'resistor',
+          option3:'battery',
+					answer:'battery',
+					result:'',
+					graphic:'../src/assets/images/openSwitch.png',
+					choice:''
+				}
 			
 	]
 
@@ -96,6 +135,7 @@
     questions = library.sort(function(a,b){return 0.5 - Math.random()});
     questions.splice(gameLength, questions.length)
     questions[i].choice = ''
+		console.log('start - questions is ' + questions)
   }
 
 	let i = 0
@@ -112,12 +152,10 @@
       result += ' The correct answer was ' + questions[i].answer
 		}
     answering = false
-		console.log('function is done. result is ' + result + 'answering is ' + answering)
 		return result, answering, points
 	}
 	
 	function next () {
-		console.log('function next running')
 		i += 1
     answering = true
 		console.log('i = ' + i)
@@ -134,11 +172,11 @@
     name = ''
     formRoom = ''
     result = ''
+		console.log('reset - questions is ' + questions)
     return i, points, name, formRoom, result
   }
 
 	function state(choice) {
-		console.log('function state running. answering = ' + answering + 'complete is ' + complete)
 		if (answering === false) {
         next()
         } else if (answering === true) {
@@ -181,6 +219,13 @@
             <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
             {questions[i].option2}
           </label>
+          {#if (questions[i].option3 != '')}
+            <label>
+              <input type="radio" bind:group={questions[i].choice} value={questions[i].option3}>
+              {questions[i].option3}
+            </label>
+            <br>
+          {/if}
           <br>
           <br>
       {:else if (questions[i].type == 'number')}
