@@ -6,12 +6,15 @@
   let formRoom = ''
   let started = false
   let gameLength = 3
+	let library = []
+  let questions = []
 	
-	let library = [
+  function start() {
+    library = [
 				{
-					question:'Does current split or stay constant through a series 			circuit?',
+				 	question:'Does current split or stay constant through a series 			circuit?',
           type: 'multi',
-					option1:'same',
+				  option1:'same',
 					option2:'splits',
           option3: '',
 					answer:'same',
@@ -98,7 +101,7 @@
 					option1:'switch',
 					option2:'lightbulb',
           option3:'voltmeter',
-					answer:'against',
+					answer:'lightbulb',
 					result:'',
 					graphic:'../src/assets/images/lightbulb.png',
 					choice:''
@@ -122,20 +125,16 @@
           option3:'battery',
 					answer:'battery',
 					result:'',
-					graphic:'../src/assets/images/openSwitch.png',
+					graphic:'../src/assets/images/battery.png',
 					choice:''
-				}
-			
-	]
+				}	
+	  ]
 
-  let questions = []
-	
-  function start() {
     started = true
-    questions = library.sort(function(a,b){return 0.5 - Math.random()});
+		questions = library
+    questions.sort(function(a,b){return 0.5 - Math.random()});
     questions.splice(gameLength, questions.length)
     questions[i].choice = ''
-		console.log('start - questions is ' + questions)
   }
 
 	let i = 0
@@ -172,7 +171,6 @@
     name = ''
     formRoom = ''
     result = ''
-		console.log('reset - questions is ' + questions)
     return i, points, name, formRoom, result
   }
 
@@ -183,16 +181,21 @@
 				check(choice)
 			}
 	}
+
+  function validity (input) {
+    for (let i = 0; i < input.length; i++) {
+      
+    }
+  }
 	
 </script>
 
 <h1>Electricty! </h1>
 
-<input bind:value={name} placeholder="enter your name">
-
-<input bind:value={formRoom} placeholder="enter your form class">
-
 {#if started === false}
+    <input bind:value={name} placeholder="enter your name">
+    
+    <input bind:value={formRoom} placeholder="enter your form class">
   {#if name != '' && formRoom != ''}
     <p> Hello {name} from room {formRoom}</p>
     <button id='btnStart' on:click={start}>Start Quiz</button>
