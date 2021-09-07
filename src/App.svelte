@@ -4,10 +4,12 @@
   let points = 0
   let name = ''
   let formRoom = ''
-  let started = false
   let gameLength = 3
+  let started = false
 	let library = []
   let questions = []
+  let valid = false
+	let error = false
 	
   function start() {
     library = [
@@ -168,10 +170,11 @@
     answering = true
     i = 0
     points = 0
+		gameLength = 3
+		valid = false
     name = ''
     formRoom = ''
     result = ''
-    return i, points, name, formRoom, result
   }
 
 	function state(choice) {
@@ -182,23 +185,40 @@
 			}
 	}
 
-  function validity (input) {
-    for (let i = 0; i < input.length; i++) {
-      
-    }
+  function validate(number, min, max) {
+		console.log (number + 'min' + min + 'max' + max)
+    if (min > number || number > max) {
+      valid = false
+			console.log(valid)
+			error = true
+			return error
+    } else {
+			valid = true
+		}
+		return valid
   }
 	
 </script>
 
-<h1>Electricty! </h1>
+<h1>Electricty! (Circuits) </h1>
 
 {#if started === false}
+  {#if valid === false}
+  <p>Gamelength must be a number between 1 and 11. </p>
+    <label>
+      Gamelength:
+      <input type='number' bind:value={gameLength}>
+      <button on:click={validate(gameLength, 1, 11)}>Next</button>
+    </label>
+  {:else if valid === true}
     <input bind:value={name} placeholder="enter your name">
     
     <input bind:value={formRoom} placeholder="enter your form class">
-  {#if name != '' && formRoom != ''}
-    <p> Hello {name} from room {formRoom}</p>
-    <button id='btnStart' on:click={start}>Start Quiz</button>
+
+      {#if (name != '' && formRoom != '')}
+        <p> Hello {name} from room {formRoom}</p>
+        <button id='btnStart' on:click={start}>Start Quiz</button>
+      {/if}
   {/if}
   <br><br>
 {:else if started === true}
@@ -246,9 +266,7 @@
       </button>
       {/if}
   {:else}
-    <p> You are done :) </p>
-      <button id='btnCheck' on:click={reset}>Reset</button>
-    
+    <p> You are done :) </p>  
   {/if}
 
   {#if (result != '')}
@@ -256,6 +274,8 @@
   {/if}
   <p>Points: {points}/{gameLength} </p>
 {/if}
+
+	<button id='btnReset' on:click={reset}>Reset</button>
 
 <style>
   :root {
