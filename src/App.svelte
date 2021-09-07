@@ -9,7 +9,7 @@
 	let library = []
   let questions = []
   let valid = false
-	let error = false
+	let error = ''
 	
   function start() {
     library = [
@@ -190,10 +190,10 @@
     if (min > number || number > max) {
       valid = false
 			console.log(valid)
-			error = true
-			return error
+			error += 'Gamelength is not valid. Try again'
     } else {
 			valid = true
+			error = ''
 		}
 		return valid
   }
@@ -274,7 +274,7 @@
   {/if}
   <p>Points: {points}/{gameLength} </p>
 {/if}
-
+  <p>{error}</p>
 	<button id='btnReset' on:click={reset}>Reset</button>
 
 <style>
