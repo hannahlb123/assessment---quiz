@@ -1,4 +1,5 @@
 <script>
+  //create empty variables to set up page
 	let choice = ''
 	let result = ''
   let points = 0
@@ -10,8 +11,16 @@
   let questions = []
   let valid = false
 	let error = ''
+	let i = 0
+	let question = questions.at[i]
+  let answering = true
+  let complete = false
+	let age = ''
 	
+  //start function. when the start button is clicked, generate the library of questions 
   function start() {
+		console.log('function start')
+		//create a library with a list of question options
     library = [
 				{
 				 	question:'Does current split or stay constant through a series 			circuit?',
@@ -131,94 +140,114 @@
 					choice:''
 				}	
 	  ]
-
+		//tell the program that the quiz has started
     started = true
+		//add the list of questions to a new array and shuffle the questions
 		questions = library
     questions.sort(function(a,b){return 0.5 - Math.random()});
+		//cut the list of questions to the game length provided by the user
     questions.splice(gameLength, questions.length)
-    questions[i].choice = ''
   }
-
-	let i = 0
-	let question = questions.at[i]
-  let answering = true
-  let complete = false
 	
+	//function to check if the user's response matches the correct answer
 	function check (response) {
+		//if the response is the same as the answer, change the result to correct and add one to the total point count
 		if (response == questions[i].answer) {
 			result = 'Correct!'
       points += 1
 		} else {
+			//if the user input is incorrect, the result is wrong and this prints the correct answer as well so they know what they did wrong
 			result = 'Wrong.'
       result += ' The correct answer was ' + questions[i].answer
 		}
+		//tell the program that the user is no longer answering a question so that it can present the option to move to the next question
     answering = false
+		//return altered variables
 		return result, answering, points
 	}
 	
+	//when user clickes 'next' button - add one to index count of questions, tell the program that the user is now answering the next question. Clear result paragraph and return altered variables
 	function next () {
 		i += 1
     answering = true
-		console.log('i = ' + i)
     result = ''
-    questions[i].choice = ''
-    return result, answering
+    return i, result, answering
 	}
 
+	//when user wants to reset game
   function reset () {
+		//tell the program they have not started the quiz
     started = false
+		//tells program user is not currently answering a question
     answering = true
+    valid = false
+		//sets index of questions to 0 - this selects the first question in the list
     i = 0
+		//resets points to 0
     points = 0
-		gameLength = 3
-		valid = false
+		//tells program that the user has not yet entered a valid game length
+		validGameLength = false
+		validAge = false
+		//sets name and form room to empty text boxes
     name = ''
     formRoom = ''
+		//clears result output area
     result = ''
+    error = ''
+    return error
   }
 
+	//when t
 	function state(choice) {
+		//if the user is not answering a question, allow them to move to the next questions
 		if (answering === false) {
         next()
+				//otherwise, if they are answering a question, send their chosen input to be checked against the answer
         } else if (answering === true) {
 				check(choice)
 			}
 	}
 
-  function validate(number, min, max) {
-		console.log (number + 'min' + min + 'max' + max)
+	//when a user enters a numerical input and clicks the 'next' button, this function checks if their input is valid against the set parameters for the input being taken 
+  function validate( number, min, max, print ) {
+		console.log (valid + '' + number + 'min' + min + 'max' + max)
     if (min > number || number > max) {
       valid = false
-			console.log(valid)
-			error += 'Gamelength is not valid. Try again'
+			error += 'The ' + print + ' you have entered is not valid. Please try again'
     } else {
 			valid = true
-			error = ''
+			error = 'its TRUE'
 		}
+		console.log (valid + '' + number + 'min' + min + 'max' + max)
 		return valid
   }
 	
 </script>
 
+
 <h1>Electricty! (Circuits) </h1>
 
 {#if started === false}
-  {#if valid === false}
-  <p>Gamelength must be a number between 1 and 11. </p>
+	{#if valid === false}
+  <p>Gamelength must be a number between 1 and 10. </p>
     <label>
       Gamelength:
-      <input type='number' bind:value={gameLength}>
-      <button on:click={validate(gameLength, 1, 11)}>Next</button>
+			{gameLength}
+      <input type='range' bind:value={gameLength} min=1 max=10>
     </label>
-  {:else if valid === true}
-    <input bind:value={name} placeholder="enter your name">
-    
-    <input bind:value={formRoom} placeholder="enter your form class">
 
-      {#if (name != '' && formRoom != '')}
-        <p> Hello {name} from room {formRoom}</p>
-        <button id='btnStart' on:click={start}>Start Quiz</button>
-      {/if}
+		<label>
+      Age:
+      <input type='number' bind:value={age} min=0 max=130>
+    </label>
+      <button on:click={validate( age, 0, 130, 'age' )}>Next</button>
+	{:else if valid === true}
+					<input bind:value={name} placeholder="enter your name">
+					<input bind:value={formRoom} placeholder="enter your form class">
+				{#if (name != '' && formRoom != '')}
+					<p> Hello {name} from room {formRoom}</p>
+					<button id='btnStart' on:click={start}>Start Quiz</button>
+			{/if}
   {/if}
   <br><br>
 {:else if started === true}
