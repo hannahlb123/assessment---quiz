@@ -31,6 +31,7 @@
 					answer:'same',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
 				{
@@ -42,6 +43,7 @@
 					answer:'splits',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
         {
@@ -51,6 +53,7 @@
           unit: 'Volts',
 					result:'',
 					graphic:'../src/assets/images/circuit1.png',
+          graphicClass:'large',
 					choice:''
 				},
         {
@@ -62,6 +65,7 @@
 					answer:'same',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
         {
@@ -73,6 +77,7 @@
           option3: '',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
         {
@@ -84,6 +89,7 @@
 					answer:'with',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
         {
@@ -95,6 +101,7 @@
 					answer:'against',
 					result:'',
 					graphic:'',
+          graphicClass: '',
 					choice:''
 				},
         {
@@ -104,6 +111,7 @@
           unit: 'Amps',
 					result:'',
 					graphic:'../src/assets/images/circuit2.png',
+          graphicClass: 'large',
 					choice:''
 				},
         {
@@ -115,6 +123,7 @@
 					answer:'lightbulb',
 					result:'',
 					graphic:'../src/assets/images/lightbulb.png',
+          graphicClass: 'small',
 					choice:''
 				},
         {
@@ -126,6 +135,7 @@
 					answer:'open switch',
 					result:'',
 					graphic:'../src/assets/images/openSwitch.png',
+          graphicClass: 'small',
 					choice:''
 				},
         {
@@ -137,6 +147,7 @@
 					answer:'battery',
 					result:'',
 					graphic:'../src/assets/images/battery.png',
+          graphicClass: 'small',
 					choice:''
 				}	
 	  ]
@@ -151,17 +162,23 @@
 	
 	//function to check if the user's response matches the correct answer
 	function check (response) {
-		//if the response is the same as the answer, change the result to correct and add one to the total point count
-		if (response == questions[i].answer) {
-			result = 'Correct!'
-      points += 1
-		} else {
-			//if the user input is incorrect, the result is wrong and this prints the correct answer as well so they know what they did wrong
-			result = 'Wrong.'
-      result += ' The correct answer was ' + questions[i].answer
-		}
-		//tell the program that the user is no longer answering a question so that it can present the option to move to the next question
-    answering = false
+    if (response != '') {
+						//if the response is the same as the answer, change the result to correct and add one to the total point count
+            if (response == questions[i].answer) {
+              result = 'Correct!'
+              points += 1
+            } else {
+              //if the user input is incorrect, the result is wrong and this prints the correct answer as well so they know what they did wrong
+              result = 'Wrong.'
+              result += ' The correct answer was ' + questions[i].answer
+            }
+            //tell the program that the user is no longer answering a question so that it can present the option to move to the next question
+            answering = false
+            error = ''
+					} else {
+						error = 'Please enter an answer'
+					}
+		
 		//return altered variables
 		return result, answering, points
 	}
@@ -180,14 +197,12 @@
     started = false
 		//tells program user is not currently answering a question
     answering = true
-    valid = false
 		//sets index of questions to 0 - this selects the first question in the list
     i = 0
 		//resets points to 0
     points = 0
-		//tells program that the user has not yet entered a valid game length
-		validGameLength = false
-		validAge = false
+		//tells program that the user has not yet entered a valid age
+		valid = false
 		//sets name and form room to empty text boxes
     name = ''
     formRoom = ''
@@ -197,70 +212,67 @@
     return error
   }
 
-	//when t
-	function state(choice) {
-		//if the user is not answering a question, allow them to move to the next questions
-		if (answering === false) {
-        next()
-				//otherwise, if they are answering a question, send their chosen input to be checked against the answer
-        } else if (answering === true) {
-				check(choice)
-			}
-	}
-
 	//when a user enters a numerical input and clicks the 'next' button, this function checks if their input is valid against the set parameters for the input being taken 
-  function validate( number, min, max, print ) {
-		console.log (valid + '' + number + 'min' + min + 'max' + max)
-    if (min > number || number > max) {
+  function validate( number, min, max, rec, print ) {
+    if ((number == '') || (number < min || number > max)) {
       valid = false
-			error += 'The ' + print + ' you have entered is not valid. Please try again'
+      error = 'The ' + print + ' you have entered is not valid. Please try again'			
+    } else if (rec > number) {
+			error = 'You are too young!'   
     } else {
 			valid = true
-			error = 'its TRUE'
+			error = ''
 		}
-		console.log (valid + '' + number + 'min' + min + 'max' + max)
 		return valid
   }
 	
 </script>
 
-
 <h1>Electricty! (Circuits) </h1>
 
+<!-- if the user has not started the quiz or entered a valid age, show them the start page with an option to input a game length and an age -->
 {#if started === false}
 	{#if valid === false}
   <p>Gamelength must be a number between 1 and 10. </p>
+    <!-- slider connected to game length input offers numbers between 1 and 10 -->
     <label>
       Gamelength:
 			{gameLength}
       <input type='range' bind:value={gameLength} min=1 max=10>
     </label>
-
+    <!-- number input for user's age-->
 		<label>
       Age:
       <input type='number' bind:value={age} min=0 max=130>
     </label>
-      <button on:click={validate( age, 0, 130, 'age' )}>Next</button>
+    <!-- 'next' button - checks that user has entered a valid age - if yes it allows them to move to the next screen, if not it prints an error message -->
+      <button on:click={validate( age, 0, 130, 8, 'age' )}>Next</button>
 	{:else if valid === true}
+<!--   if the user has entered a valid age, offer input area for name and form room values      -->
 					<input bind:value={name} placeholder="enter your name">
 					<input bind:value={formRoom} placeholder="enter your form class">
 				{#if (name != '' && formRoom != '')}
+        <!-- if the user has entered a value into both the name and form room input areas, greet the user and give them the option to start the quiz by presenting the start button -->
 					<p> Hello {name} from room {formRoom}</p>
 					<button id='btnStart' on:click={start}>Start Quiz</button>
 			{/if}
   {/if}
   <br><br>
 {:else if started === true}
-<p>Name: {name}   Room: {formRoom}</p>
+<!-- if the user has started the quiz, greet them with their name and form room -->
+<p>Welcome {name}!  Room: {formRoom}</p>
+<!-- if the index on questions is less than the specified game length, present the question to the user -->
   {#if (i < gameLength)}
       {questions[i].question}
 
+    <!-- if the question has a graphic (image) associated with it - show the image here -->
     {#if (questions[i].graphic != '')}
-      <img src={questions[i].graphic} alt='not working'>
+      <img class={questions[i].graphicClass} src={questions[i].graphic} alt='circuit'>
     {/if}
 
   <br>
 
+  <!-- if the question is multi choice, present the options as radio buttons. -->
     {#if (questions[i].type == 'multi')}
           <label>
             <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
@@ -271,6 +283,7 @@
             <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
             {questions[i].option2}
           </label>
+          <!-- if there is a third option, present it here -->
           {#if (questions[i].option3 != '')}
             <label>
               <input type="radio" bind:group={questions[i].choice} value={questions[i].option3}>
@@ -280,30 +293,38 @@
           {/if}
           <br>
           <br>
+      <!-- if the question requires a numerical response, present a number input box with the unit next to it -->
       {:else if (questions[i].type == 'number')}
           <input type='number' bind:value={questions[i].choice}>
           {questions[i].unit}
       {/if}
 
+    <!-- while the user is answering a question, present the option for them to check their response with a 'check' button -->
       {#if answering}
-      <button id='btnCheck' on:click={state(questions[i].choice)}>
+      <button id='btnCheck' on:click={check(questions[i].choice)}>
         Check
       </button>
+      <!-- if they are not currently answering a question, allow them to move to the next question with a 'next' button -->
       {:else}
-      <button id='btnNext' on:click={state}>
+      <button id='btnNext' on:click={next}>
         Next
       </button>
       {/if}
+  <!-- if they have done the number of questions specified by game length, tell the user they have finsihed the quiz and how they can play again -->
   {:else}
-    <p> You are done :) </p>  
+    <p> You are done :). To play again - click reset. </p>  
   {/if}
 
-  {#if (result != '')}
-    <p> {result} </p>
-  {/if}
+<!-- paragraph with result which is what tells the user if they have answered the question correctly or not and alerts them of the correct answer -->
+	<p> {result} </p>
+
+<!-- tells the user how many points they have - points are added when a correct answer is guessed -->
   <p>Points: {points}/{gameLength} </p>
 {/if}
-  <p>{error}</p>
+<!-- if the user has entered an invalid input, this alerts them of what they have done wring with a friendly message -->
+	<p>{error}</p>
+
+<!-- reset button - this is shown at all times so the user can restart at any stage -->
 	<button id='btnReset' on:click={reset}>Reset</button>
 
 <style>
@@ -312,9 +333,14 @@
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 
-  img {
+  .large {
     height: 12rem;
     width: auto;
+  }
+
+  .small {
+    height: 6rem;
+    width: auto
   }
 
   h1 {
