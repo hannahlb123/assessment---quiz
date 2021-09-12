@@ -7,7 +7,6 @@
   let formRoom = ''
   let gameLength = 3
   let started = false
-	let library = []
   let questions = []
   let valid = false
 	let error = ''
@@ -16,12 +15,10 @@
   let answering = true
   let complete = false
 	let age = ''
-	
-  //start function. when the start button is clicked, generate the library of questions 
-  function start() {
-		console.log('function start')
-		//create a library with a list of question options
-    library = [
+	let letter = false
+
+	//create a library with a list of question options
+  let library = [
 				{
 				 	question:'Does current split or stay constant through a series 			circuit?',
           type: 'multi',
@@ -151,10 +148,14 @@
 					choice:''
 				}	
 	  ]
+	
+  //start function. when the start button is clicked, generate the library of questions 
+  function start() {
+		console.log('function start')
 		//tell the program that the quiz has started
     started = true
 		//add the list of questions to a new array and shuffle the questions
-		questions = library
+		questions = library.slice()
     questions.sort(function(a,b){return 0.5 - Math.random()});
 		//cut the list of questions to the game length provided by the user
     questions.splice(gameLength, questions.length)
@@ -183,7 +184,7 @@
 		return result, answering, points
 	}
 	
-	//when user clickes 'next' button - add one to index count of questions, tell the program that the user is now answering the next question. Clear result paragraph and return altered variables
+	//when user clicks 'next' button - add one to index count of questions, tell the program that the user is now answering the next question. Clear result paragraph and return altered variables
 	function next () {
 		i += 1
     answering = true
@@ -203,13 +204,14 @@
     points = 0
 		//tells program that the user has not yet entered a valid age
 		valid = false
+		letter = false
 		//sets name and form room to empty text boxes
     name = ''
     formRoom = ''
 		//clears result output area
     result = ''
     error = ''
-    return error
+    return error, name, formRoom
   }
 
 	//when a user enters a numerical input and clicks the 'next' button, this function checks if their input is valid against the set parameters for the input being taken 
@@ -225,6 +227,24 @@
 		}
 		return valid
   }
+
+  function validName(text) {
+		console.log(text)
+      for (let i = 0; i < text.length; i++) {
+				console.log(text.charAt(i))
+				if ((text.charAt(i)).toLowerCase() != (text.charAt(i)).toUpperCase()) {
+					letter = true
+					error = ''
+					console.log('true')
+				} else {
+					letter = false
+					i -= 1
+					error = 'The name you have entered is not valid. Try again. Name must be comrpised of only letters.'
+					console.log('false')
+				}
+			}
+    return letter
+  }
 	
 </script>
 
@@ -233,7 +253,6 @@
 <!-- if the user has not started the quiz or entered a valid age, show them the start page with an option to input a game length and an age -->
 {#if started === false}
 	{#if valid === false}
-  <p>Gamelength must be a number between 1 and 10. </p>
     <!-- slider connected to game length input offers numbers between 1 and 10 -->
     <label>
       Gamelength:
@@ -247,22 +266,28 @@
     </label>
     <!-- 'next' button - checks that user has entered a valid age - if yes it allows them to move to the next screen, if not it prints an error message -->
       <button on:click={validate( age, 0, 130, 8, 'age' )}>Next</button>
-	{:else if valid === true}
+	{:else if valid}
 <!--   if the user has entered a valid age, offer input area for name and form room values      -->
-					<input bind:value={name} placeholder="enter your name">
-					<input bind:value={formRoom} placeholder="enter your form class">
-				{#if (name != '' && formRoom != '')}
-        <!-- if the user has entered a value into both the name and form room input areas, greet the user and give them the option to start the quiz by presenting the start button -->
-					<p> Hello {name} from room {formRoom}</p>
-					<button id='btnStart' on:click={start}>Start Quiz</button>
-			{/if}
+				{#if letter === false}
+						<input bind:value={name} placeholder="enter your name">
+						<input bind:value={formRoom} placeholder="enter your form class">
+							{#if (name != '' && formRoom != '')}
+								<button on:click={validName(name)}>Next</button>
+							<!-- if the user has entered a value into both the name and form room input areas, greet the user and give them the option to start the quiz by presenting the start button -->
+							{:else if (name == '' || formRoom == '')}
+								<p> Please enter a name and form room </p>
+							{/if}
+				{:else if letter === true}
+						<p> Hello {name} from room {formRoom}</p>
+						<button id='btnStart' on:click={start}>Start Quiz</button>
+				{/if}
   {/if}
   <br><br>
 {:else if started === true}
 <!-- if the user has started the quiz, greet them with their name and form room -->
 <p>Welcome {name}!  Room: {formRoom}</p>
 <!-- if the index on questions is less than the specified game length, present the question to the user -->
-  {#if (i < gameLength)}
+  {#if (i < gameLength) }
       {questions[i].question}
 
     <!-- if the question has a graphic (image) associated with it - show the image here -->
