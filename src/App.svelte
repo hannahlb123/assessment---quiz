@@ -149,7 +149,7 @@
 				}	
 	  ]
 	
-  //start function. when the start button is clicked, generate the library of questions 
+  //start function. when the start button is clicked, tell program the user has started the quiz. Move to next stage of game 
   function start() {
 		console.log('function start')
 		//tell the program that the quiz has started
@@ -159,6 +159,7 @@
     questions.sort(function(a,b){return 0.5 - Math.random()});
 		//cut the list of questions to the game length provided by the user
     questions.splice(gameLength, questions.length)
+    questions[i].choice = ''
   }
 	
 	//function to check if the user's response matches the correct answer
@@ -189,6 +190,7 @@
 		i += 1
     answering = true
     result = ''
+    questions[i].choice = ''
     return i, result, answering
 	}
 
@@ -208,6 +210,7 @@
 		//sets name and form room to empty text boxes
     name = ''
     formRoom = ''
+
 		//clears result output area
     result = ''
     error = ''
