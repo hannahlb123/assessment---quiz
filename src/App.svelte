@@ -238,17 +238,16 @@
 					console.log('true')
 				} else {
 					letter = false
-					i -= 1
 					error = 'The name you have entered is not valid. Try again. Name must be comrpised of only letters.'
 					console.log('false')
+          return letter
 				}
 			}
-    return letter
   }
 	
 </script>
 
-<h1>Electricty! (Circuits) </h1>
+<h1>Electricty!</h1>
 
 <!-- if the user has not started the quiz or entered a valid age, show them the start page with an option to input a game length and an age -->
 {#if started === false}
