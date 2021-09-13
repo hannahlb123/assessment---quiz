@@ -11,6 +11,7 @@
   let valid = false
 	let error = ''
 	let i = 0
+	let question = questions.at[i]
   let answering = true
   let complete = false
 	let age = ''
@@ -158,7 +159,6 @@
     questions.sort(function(a,b){return 0.5 - Math.random()});
 		//cut the list of questions to the game length provided by the user
     questions.splice(gameLength, questions.length)
-    //clear any user responses from previous rounds
     questions[i].choice = ''
   }
 	
@@ -185,7 +185,7 @@
 		return result, answering, points
 	}
 	
-	//when user clicks 'next' button - add one to index count of questions, tell the program that the user is now answering the next question. Clear any response that the user had selected in previous rounds. Clear result paragraph and return altered variables.
+	//when user clicks 'next' button - add one to index count of questions, tell the program that the user is now answering the next question. Clear result paragraph and return altered variables
 	function next () {
 		i += 1
     answering = true
@@ -210,6 +210,7 @@
 		//sets name and form room to empty text boxes
     name = ''
     formRoom = ''
+
 		//clears result output area
     result = ''
     error = ''
@@ -230,17 +231,14 @@
 		return valid
   }
 
-//validates a users name input. Checks each character in the name to see if it is a letter, if it finds a non letter, it returns false and the user gets an error message
   function validName(text) {
 		console.log(text)
-      //for each character entered in the name input area
       for (let i = 0; i < text.length; i++) {
-        //if the character can be capitalised (any letter) then it moves on to the next character
+				console.log(text.charAt(i))
 				if ((text.charAt(i)).toLowerCase() != (text.charAt(i)).toUpperCase()) {
 					letter = true
 					error = ''
 					console.log('true')
-        //if the character cannot be capitalised, it is not a letter so it returns false
 				} else {
 					letter = false
 					error = 'The name you have entered is not valid. Try again. Name must be comrpised of only letters.'
@@ -275,14 +273,12 @@
 				{#if letter === false}
 						<input bind:value={name} placeholder="enter your name">
 						<input bind:value={formRoom} placeholder="enter your form class">
-              <!-- if the user has input a value into both the name and form room input areas, allow them to validate the name by clicking the next button -->
 							{#if (name != '' && formRoom != '')}
 								<button on:click={validName(name)}>Next</button>
-              <!-- otherwise, prompt the user to enter a name and form room -->
+							<!-- if the user has entered a value into both the name and form room input areas, greet the user and give them the option to start the quiz by presenting the start button -->
 							{:else if (name == '' || formRoom == '')}
 								<p> Please enter a name and form room </p>
 							{/if}
-        <!-- if the user has entered a valid name, greet the user and give them the option to start the quiz by presenting the start button -->
 				{:else if letter === true}
 						<p> Hello {name} from room {formRoom}</p>
 						<button id='btnStart' on:click={start}>Start Quiz</button>
@@ -290,7 +286,7 @@
   {/if}
   <br><br>
 {:else if started === true}
-<!-- once the user has started the quiz, greet them with their name and form room -->
+<!-- if the user has started the quiz, greet them with their name and form room -->
 <p>Welcome {name}!  Room: {formRoom}</p>
 <!-- if the index on questions is less than the specified game length, present the question to the user -->
   {#if (i < gameLength) }
