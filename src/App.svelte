@@ -241,7 +241,7 @@
 					console.log('true')
 				} else {
 					letter = false
-					error = 'The name you have entered is not valid. Try again. Name must be comrpised of only letters.'
+					error = 'The name you have entered is not valid. Try again. Name must be comprised of only letters.'
 					console.log('false')
           return letter
 				}
@@ -250,7 +250,7 @@
 	
 </script>
 
-<h1>Electricty!</h1>
+<h1>Electricity!</h1>
 
 <!-- if the user has not started the quiz or entered a valid age, show them the start page with an option to input a game length and an age -->
 {#if started === false}
@@ -322,7 +322,7 @@
           <br>
       <!-- if the question requires a numerical response, present a number input box with the unit next to it -->
       {:else if (questions[i].type == 'number')}
-          <input type='number' bind:value={questions[i].choice}>
+          <input type='number' bind:value={questions[i].choice} min=0 max=1000>
           {questions[i].unit}
       {/if}
 
