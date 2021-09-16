@@ -1,6 +1,5 @@
 <script>
   //create empty variables to set up page
-	let choice = ''
 	let result = ''
   let points = 0
   let name = ''
@@ -159,6 +158,7 @@
     questions.sort(function(a,b){return 0.5 - Math.random()});
 		//cut the list of questions to the game length provided by the user
     questions.splice(gameLength, questions.length)
+    //empties any answer selections made in previous rounds
     questions[i].choice = ''
   }
 	
@@ -177,6 +177,7 @@
             //tell the program that the user is no longer answering a question so that it can present the option to move to the next question
             answering = false
             error = ''
+          //if the user has not input an answer, ask them to enter a response
 					} else {
 						error = 'Please enter an answer'
 					}
@@ -190,6 +191,7 @@
 		i += 1
     answering = true
     result = ''
+    //clear any responses from previous round
     questions[i].choice = ''
     return i, result, answering
 	}
@@ -218,10 +220,12 @@
   }
 
 	//when a user enters a numerical input and clicks the 'next' button, this function checks if their input is valid against the set parameters for the input being taken 
-  function validate( number, min, max, rec, print ) {
+  function validate( number, min, max, rec) {
+    //if the number is smaller than the minimum or larger than the maximum, the input is not valid
     if ((number == '') || (number < min || number > max)) {
       valid = false
-      error = 'The ' + print + ' you have entered is not valid. Please try again'			
+      error = 'The age you have entered is not valid. Please try again'
+    //if the age is below what is recommended, tell the user they are too young			
     } else if (rec > number) {
 			error = 'You are too young!'   
     } else {
@@ -231,14 +235,16 @@
 		return valid
   }
 
+  //this function validates a user's name input to check if it is all letters. If every character is a letter, validName is true so the html moves onto the next stage of the quiz
   function validName(text) {
-		console.log(text)
+      //for each character in the text input, check if it is a letter
       for (let i = 0; i < text.length; i++) {
-				console.log(text.charAt(i))
+        //if the letter can be capatalised, it is a letter
 				if ((text.charAt(i)).toLowerCase() != (text.charAt(i)).toUpperCase()) {
 					letter = true
 					error = ''
 					console.log('true')
+        //if it cannot be capatalised, it is an invalid character so print an error message and return letter = false to html where the page will respond accordingly
 				} else {
 					letter = false
 					error = 'The name you have entered is not valid. Try again. Name must be comprised of only letters.'
@@ -258,6 +264,7 @@
     <!-- slider connected to game length input offers numbers between 1 and 10 -->
     <label>
       Gamelength:
+      <!-- shows the user what number the slider is sitting on -->
 			{gameLength}
       <input type='range' bind:value={gameLength} min=1 max=10>
     </label>
@@ -267,88 +274,91 @@
       <input type='number' bind:value={age} min=0 max=130>
     </label>
     <!-- 'next' button - checks that user has entered a valid age - if yes it allows them to move to the next screen, if not it prints an error message -->
-      <button on:click={validate( age, 0, 130, 8, 'age' )}>Next</button>
+      <button on:click={validate( age, 0, 130, 8)}>Next</button>
 	{:else if valid}
 <!--   if the user has entered a valid age, offer input area for name and form room values      -->
 				{#if letter === false}
 						<input bind:value={name} placeholder="enter your name">
 						<input bind:value={formRoom} placeholder="enter your form class">
+            <!-- if the user has entered a value into both the name and form room input areas, allow them the option to submit these inputs for checking -->
 							{#if (name != '' && formRoom != '')}
 								<button on:click={validName(name)}>Next</button>
-							<!-- if the user has entered a value into both the name and form room input areas, greet the user and give them the option to start the quiz by presenting the start button -->
 							{:else if (name == '' || formRoom == '')}
 								<p> Please enter a name and form room </p>
 							{/if}
+        <!-- if the user has entered a valid name and clicked the next button, greet the user and give them the option to start the quiz by presenting the start button -->
 				{:else if letter === true}
 						<p> Hello {name} from room {formRoom}</p>
 						<button id='btnStart' on:click={start}>Start Quiz</button>
 				{/if}
   {/if}
   <br><br>
-{:else if started === true}
 <!-- if the user has started the quiz, greet them with their name and form room -->
-<p>Welcome {name}!  Room: {formRoom}</p>
-<!-- if the index on questions is less than the specified game length, present the question to the user -->
-  {#if (i < gameLength) }
-      {questions[i].question}
+{:else if started === true}
+  <p>Welcome {name}!  Room: {formRoom}</p>
+  <!-- if the current index of the question is less than the specified game length, present the question to the user -->
+    {#if (i < gameLength) }
+        {questions[i].question}
 
-    <!-- if the question has a graphic (image) associated with it - show the image here -->
-    {#if (questions[i].graphic != '')}
-      <img class={questions[i].graphicClass} src={questions[i].graphic} alt='circuit'>
-    {/if}
+      <!-- if the question has a graphic (image) associated with it - show the image here -->
+      {#if (questions[i].graphic != '')}
+        <img class={questions[i].graphicClass} src={questions[i].graphic} alt='circuit'>
+      {/if}
 
-  <br>
+    <br>
 
-  <!-- if the question is multi choice, present the options as radio buttons. -->
-    {#if (questions[i].type == 'multi')}
-          <label>
-            <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
-            {questions[i].option1}
-          </label>
-          <br>
-          <label>
-            <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
-            {questions[i].option2}
-          </label>
-          <!-- if there is a third option, present it here -->
-          {#if (questions[i].option3 != '')}
+    <!-- if the question is multi choice, present the options as radio buttons. -->
+      {#if (questions[i].type == 'multi')}
             <label>
-              <input type="radio" bind:group={questions[i].choice} value={questions[i].option3}>
-              {questions[i].option3}
+              <input type="radio" bind:group={questions[i].choice} value={questions[i].option1}>
+              {questions[i].option1}
             </label>
             <br>
-          {/if}
-          <br>
-          <br>
-      <!-- if the question requires a numerical response, present a number input box with the unit next to it -->
-      {:else if (questions[i].type == 'number')}
-          <input type='number' bind:value={questions[i].choice} min=0 max=1000>
-          {questions[i].unit}
-      {/if}
+            <label>
+              <input type="radio" bind:group={questions[i].choice} value={questions[i].option2}>
+              {questions[i].option2}
+            </label>
+            <!-- if there is a third option, present it here -->
+            {#if (questions[i].option3 != '')}
+              <label>
+                <input type="radio" bind:group={questions[i].choice} value={questions[i].option3}>
+                {questions[i].option3}
+              </label>
+              <br>
+            {/if}
+            <br>
+            <br>
 
-    <!-- while the user is answering a question, present the option for them to check their response with a 'check' button -->
-      {#if answering}
-      <button id='btnCheck' on:click={check(questions[i].choice)}>
-        Check
-      </button>
-      <!-- if they are not currently answering a question, allow them to move to the next question with a 'next' button -->
-      {:else}
-      <button id='btnNext' on:click={next}>
-        Next
-      </button>
-      {/if}
-  <!-- if they have done the number of questions specified by game length, tell the user they have finsihed the quiz and how they can play again -->
-  {:else}
-    <p> You are done :). To play again - click reset. </p>  
-  {/if}
+        <!-- if the question requires a numerical response, present a number input box with the unit next to it -->
+        {:else if (questions[i].type == 'number')}
+            <input type='number' bind:value={questions[i].choice} min=0 max=1000>
+            {questions[i].unit}
+        {/if}
+
+      <!-- while the user is answering a question, present the option for them to check their response with a 'check' button -->
+        {#if answering}
+        <button id='btnCheck' on:click={check(questions[i].choice)}>
+          Check
+        </button>
+        <!-- if they are not currently answering a question, allow them to move to the next question with a 'next' button -->
+        {:else}
+        <button id='btnNext' on:click={next}>
+          Next
+        </button>
+        {/if}
+    <!-- if they have completed the number of questions specified by game length, tell the user they have finsihed the quiz and how they can play again -->
+    {:else}
+      <p> You are done :). To play again - click reset. </p>  
+    {/if}
 
 <!-- paragraph with result which is what tells the user if they have answered the question correctly or not and alerts them of the correct answer -->
 	<p> {result} </p>
 
-<!-- tells the user how many points they have - points are added when a correct answer is guessed -->
+<!-- tells the user how many points they have - points are added each time a correct answer is guessed -->
   <p>Points: {points}/{gameLength} </p>
 {/if}
-<!-- if the user has entered an invalid input, this alerts them of what they have done wring with a friendly message -->
+
+<!-- if the user has entered an invalid input, this alerts them of what they have done wrong with a friendly message -->
 	<p>{error}</p>
 
 <!-- reset button - this is shown at all times so the user can restart at any stage -->
